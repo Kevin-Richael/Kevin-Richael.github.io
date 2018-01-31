@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.2" rel="stylesheet" type="text/css" />
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/laok_32x32.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/laok_16x16.png?v=6.0.2">
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.0.2',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Win,Trust,certificate," />
+
+
+<meta name="description" content="Windows 信任体系架构攻击 通过对 Windows 用户模式信任体系结构的基本了解以及较高的权限级别, 攻击者拥有了他需要破坏信任体系的武器。那么攻击者通过颠覆信任可以来实现什么呢？  让操作系统相信攻击者提供的代码是以 “受信任的” 代码签名证书 (例如, 用于签名 Microsoft 代码的) 签名和验证的。这种攻击背后的动机是:a. 使安全产品将攻击者提供的代码分类为良性。b. 从执行">
+<meta name="keywords" content="Win,Trust,certificate">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[翻译]颠覆windows的信任体系(4)">
+<meta property="og:url" content="http://yoursite.com/2017/10/19/2017-10-19-windows-Subverting_Trust_in_Windows-4/index.html">
+<meta property="og:site_name" content="老K碎碎念">
+<meta property="og:description" content="Windows 信任体系架构攻击 通过对 Windows 用户模式信任体系结构的基本了解以及较高的权限级别, 攻击者拥有了他需要破坏信任体系的武器。那么攻击者通过颠覆信任可以来实现什么呢？  让操作系统相信攻击者提供的代码是以 “受信任的” 代码签名证书 (例如, 用于签名 Microsoft 代码的) 签名和验证的。这种攻击背后的动机是:a. 使安全产品将攻击者提供的代码分类为良性。b. 从执行">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-6.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-7.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-8.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-9.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-10.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-11.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-12.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-13.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-14.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-15.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-16.png">
+<meta property="og:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-17.png">
+<meta property="og:updated_time" content="2018-01-30T08:59:49.989Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[翻译]颠覆windows的信任体系(4)">
+<meta name="twitter:description" content="Windows 信任体系架构攻击 通过对 Windows 用户模式信任体系结构的基本了解以及较高的权限级别, 攻击者拥有了他需要破坏信任体系的武器。那么攻击者通过颠覆信任可以来实现什么呢？  让操作系统相信攻击者提供的代码是以 “受信任的” 代码签名证书 (例如, 用于签名 Microsoft 代码的) 签名和验证的。这种攻击背后的动机是:a. 使安全产品将攻击者提供的代码分类为良性。b. 从执行">
+<meta name="twitter:image" content="http://yoursite.com/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-6.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/10/19/2017-10-19-windows-Subverting_Trust_in_Windows-4/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>[翻译]颠覆windows的信任体系(4) | 老K碎碎念</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113315226-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-113315226-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">老K碎碎念</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">网络安全部落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/19/2017-10-19-windows-Subverting_Trust_in_Windows-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="longU-老K">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/laok.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老K碎碎念">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[翻译]颠覆windows的信任体系(4)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-19T23:33:53+08:00">2017-10-19</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Win/" itemprop="url" rel="index"><span itemprop="name">Win</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/10/19/2017-10-19-windows-Subverting_Trust_in_Windows-4/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/10/19/2017-10-19-windows-Subverting_Trust_in_Windows-4/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Windows-信任体系架构攻击"><a href="#Windows-信任体系架构攻击" class="headerlink" title="Windows 信任体系架构攻击"></a>Windows 信任体系架构攻击</h2><hr>
+<p>通过对 Windows 用户模式信任体系结构的基本了解以及较高的权限级别, 攻击者拥有了他需要破坏信任体系的武器。那么攻击者通过颠覆信任可以来实现什么呢？</p>
+<ol>
+<li>让操作系统相信攻击者提供的代码是以 “受信任的” 代码签名证书 (例如, 用于签名 Microsoft 代码的) 签名和验证的。这种攻击背后的动机是:<br>a. 使安全产品将攻击者提供的代码分类为良性。<br>b. 从执行签名验证的安全/诊断工具中隐藏。<br>c. 一般情况下，在实时检测工具之下，安全人员可能更容易忽略 “使用合法证书签名” 的代码。<br>d. 在执行用户模式信任验证的任何进程的上下文中加载恶意代码。</li>
+<li>颠覆应用程序强制基于可信签名权限策略的白名单发布规则。发布者强校验是最常见的名单规则方案之一,因为它甚至允许受信任发布者签名的代码可以绕过不允许软件更新的哈希规则而更新、执行，这种情况下更难维护和审核。<h3 id="SIP-劫持-1-CryptSIPDllGetSignedDataMsg"><a href="#SIP-劫持-1-CryptSIPDllGetSignedDataMsg" class="headerlink" title="SIP 劫持 #1: CryptSIPDllGetSignedDataMsg"></a>SIP 劫持 #1: CryptSIPDllGetSignedDataMsg</h3>如前所述,SIP的CryptSIPDllGetSignedDataMsg组件是允许从已签名的文件中检索编码的数字证书的。再次提醒下,SIP的CryptSIPDllGetSignedDataMsg组件的已实现导出功能存在于以下注册表项中:</li>
+</ol>
+<ul>
+<li>HKLM\SOFTWARE\[WOW6432Node\]Microsoft\Cryptography\OID\EncodingType 0\CryptSIPDllGetSignedDataMsg\<strong>{SIP Guid}</strong><ul>
+<li>Dll -实现数字签名检索函数的 DLL 的路径</li>
+<li>FuncName -实现数字签名检索功能的导出函数的名称</li>
+</ul>
+</li>
+</ul>
+<p>此外, 如前所述, CryptSIPDllGetSignedDataMsg 函数具有以下原型:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL WINAPI <span class="title">CryptSIPGetSignedDataMsg</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	IN SIP_SUBJECTINFO *pSubjectInfo,</span></span></span><br><span class="line"><span class="function"><span class="params">	OUT DWORD *pdwEncodingType,</span></span></span><br><span class="line"><span class="function"><span class="params">	IN DWORD dwIndex,</span></span></span><br><span class="line"><span class="function"><span class="params">	IN OUT DWORD *pcbSignedDataMsg,</span></span></span><br><span class="line"><span class="function"><span class="params">	OUT BYTE *pbSignedDataMsg)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>任何熟悉 c/c++ 的攻击者都能够轻松地实现此类功能, 并将现有的 SIP 条目替换为其恶意功能。首先, 了解每个参数的含义是很重要的：</p>
+<ol>
+<li>pSubjectInfo:从调用信任提供者传入的结构体指针, 包含有关提取签名的文件的所有相关信息。这里是一个例子：传递给 pwrshsip!PsGetSignature (PowerShell SIP的 CryptSIPDllGetSignedDataMsg组件)结构体的转储(dump):<br><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-6.png" alt="pSubjectInfo dump"></li>
+<li>pdwEncodingType:在从pSubjectInfo中指定的文件检索数字签名时,此参数指示调用函数(信任提供者”消息”组件)如何正确解码返回数字签名。最常见是的PKCS_7_ASN_ENCODING 和 X509_ASN_ENCODING 一起进行二进制或运算 。</li>
+<li>dwIndex: 此参数应为零, 但理论上 SIP 可以包含多个嵌入的签名, dwIndex 表示从指定文件中提取哪一个数字签名。</li>
+<li>pcbSignedDataMsg: 通过 pbSignedDataMsg 返回的数字签名的长度 (以字节为单位)。</li>
+<li>pbSignedDataMsg: 返回到调用信任提供程者的已编码的数字签名。</li>
+</ol>
+<p>因此,如果攻击者要实现此功能并使用它作为示例,来覆盖可执行文件的SIP(C689AAB8-8E78-11D0-8C47-00C04FC295EE)的CryptSIPDllGetSignedDataMsg组件,则任何 PE 文件都可能返回攻击者选择的任意数字签名。</p>
+<p>想象一下下面虚构的攻击场景:</p>
+<ol>
+<li><p>攻击者在注册表中实现了可执行文件SIP的CryptSIPDllGetSignedDataMsg组件。</p>
+</li>
+<li><p>简单地说, 无论是否有嵌入的验证码签名, 为任何可执行文件返回相同的 Microsoft 证书。</p>
+</li>
+<li><p>为了确保返回适当格式的数字签名,最好在对其进行劫持之前在调试器中的合法CryptSIPDllGetSignedDataMsg上设置断点。这样做可以确保PKCS#7认证签名数据始终可以正确地返回。</p>
+<p>a. 在 PowerShell 脚本中, 这涉及 base64 解码 “SIG # 开始签名块”（SIG # Begin signature block）。<br>b. 在带有嵌入验证码签名的PE文件中, PKCS #7 校验签名的数据存在于<a href="http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx" target="_blank" rel="noopener">PE校验码规范(PE Authenticode specification)</a>中所记录的嵌入式<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn582059(v=vs.85).aspx" target="_blank" rel="noopener">WIN_CERTIFICATE</a>结构体的bCertificate 字段中。<br>c. 编录文件本身就是 PKCS #7 校验码签名的数据 (实际上可以在嵌入的 PE 校验码签名中使用)。</p>
+</li>
+<li>现在, 攻击者的实现只需要返回正确的编码签名数据长度和签名数据。</li>
+</ol>
+<p>在这种攻击场景中,被劫持的CryptSIPDllGetSignedDataMsg可以返回用于签署许多系统组件(如notepad.exe)的目录文件的字节。为了方便地确定与已签名文件关联的编录文件,可以使用 sigcheck.exe:<br><code>sigcheck -i C:\Windows\System32\notepad.exe</code><br>在当前的例子中，返回下面的编录文件路径：<br><code>C:\WINDOWS\system32\CatRoot\{F750E6C3-38EE-11D1-85E5-00C04FC295EE}\Microsoft-Windows-Client-Features-Package-AutoMerged-shell~31bf3856ad364e35~amd64~~10.0.15063.0.cat</code><br>现在,攻击者实现只需要从该编录文件返回字节,使任何PE文件看起来都使用了与notepad.exe相同的证书进行签名。模块化设计方法是将所需的签名内容嵌入到攻击者提供的SIP DLL中的资源中。<br>下面的示例说明了 PowerShell SIP CryptSIPDllGetSignedDataMsg 组件是如何使用自定义的恶意 SIP来劫持的, 它将始终返回与 PowerShell 文件相同的合法 Microsoft 证书:<br><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-7.png" alt="PowerShell CryptSIPDllGetSignedDataMsg 劫持的演示"><br><em>PowerShell CryptSIPDllGetSignedDataMsg 劫持的演示</em></p>
+<p>可以看出, 在劫持之前, 不出所料，test.ps1 显示为未签名。然而, 在劫持发生后,test.ps1 似乎是用 Microsoft 证书签名的：<br><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-8.png" alt="一个未经签名的 PowerShell 脚本, 似乎突然间就被微软给签名了"><br><em>一个未经签名的 PowerShell 脚本, 似乎突然间就被微软给签名了</em></p>
+<p><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-9.png" alt="虽然未签名的 PowerShell 脚本看起来由 Microsoft 签名了, 但它的哈希验证并没有通过。"><br><em>虽然未签名的 PowerShell 脚本看起来由 Microsoft 签名了, 但它的哈希验证并没有通过。</em></p>
+<p>虽然看起来劫持是成功的, 但有一个缺陷-签名无法验证, 因为计算的哈希与数字签名中的已签名哈希不匹配。此劫持的另一个不良影响是,任何PowerShell代码都将使用相同的数字签名, 这将在大多数情况下导致哈希不匹配。</p>
+<p>为了防止信任验证因哈希不匹配而失败, 还需要劫持CryptSIPDllVerifyIndirectData 。</p>
+<h3 id="SIP-劫持-2-CryptSIPDllVerifyIndirectData"><a href="#SIP-劫持-2-CryptSIPDllVerifyIndirectData" class="headerlink" title="SIP 劫持 #2: CryptSIPDllVerifyIndirectData"></a>SIP 劫持 #2: CryptSIPDllVerifyIndirectData</h3><p>正如前面的劫持场景中所解释的,劫持已注册SIP的CryptSIPDllGetSignedDataMsg组件允许未经签名的代码看起来像是被签名了。但是,考虑到哈希值不匹配,数字签名将无法在攻击者提供的代码上进行验证。然而, 再劫持 CryptSIPDllVerifyIndirectData 下函数就不存在这个问题了。<br>再次提醒下， CryptSIPDllVerifyIndirectData 实现存储在以下注册表值中:</p>
+<ul>
+<li>HKLM\SOFTWARE\[WOW6432Node\]Microsoft\Cryptography\OID\EncodingType 0\CryptSIPDllVerifyIndirectData\{SIP Guid}<ul>
+<li>Dll</li>
+<li>FuncName</li>
+</ul>
+</li>
+</ul>
+<p>函数原型：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL WINAPI <span class="title">CryptSIPVerifyIndirectData</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	IN SIP_SUBJECTINFO *pSubjectInfo,</span></span></span><br><span class="line"><span class="function"><span class="params">	IN SIP_INDIRECT_DATA *pIndirectData)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>调试CryptSIPVerifyIndirectData的合法实现，可以确认当计算出的验证码哈希与签名的哈希值匹配时,CryptSIPVerifyIndirectData返回TRUE。因此,所有恶意SIP需要做的就是为被劫持的相应SIP匹配生成，返回TRUE,从而使之看起来可以通过哈希验证。继续执行PowerShell劫持示例,恶意SIP仅为哈希验证例程返回true,将解决攻击者提供的代码无法正确验证的问题。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL WINAPI <span class="title">AutoApproveHash</span><span class="params">(SIP_SUBJECTINFO *pSubjectInfo,SIP_INDIRECT_DATA *pIndirectData)</span> </span>&#123;</span><br><span class="line">	UNREFERENCED_PARAMETER(pSubjectInfo);</span><br><span class="line">	UNREFERENCED_PARAMETER(pIndirectData);</span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来, 劫持哈希验证处理程序 (连同以前的劫持签名检索功能) 将通过所有的检查, 将未经签名的 PowerShell 代码伪装为已签署Microsoft的代码:</p>
+<p><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-10.png" alt="劫持 PowerShell SIP 的 CryptSIPVerifyIndirectData 组件"><br><em>劫持 PowerShell SIP 的 CryptSIPVerifyIndirectData 组件</em></p>
+<p><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-11.png" alt="现在, 未签名的 PowerShell 文件出现签名并经过正确验证"></p>
+<p><em>现在, 未签名的 PowerShell 文件出现签名并经过正确验证</em></p>
+<p><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-12.png" alt="&quot;数字签名&quot; UI 选项卡显示一个未签名的 PowerShell 文件, 它显示签名并经过正确验证。"></p>
+<p><em>“数字签名” UI 选项卡显示一个未签名的 PowerShell 文件, 它显示签名并经过正确验证。</em></p>
+<p><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-13.png" alt="Sysinternals sigcheck 显示一个未签名的 PowerShell 文件, 它显示签名并经过正确验证。"></p>
+<p><em>Sysinternals sigcheck 显示一个未签名的 PowerShell 文件, 它显示签名并经过正确验证。</em></p>
+<p>一个更理想的劫持场景是甚至懒得劫持 CryptSIPDllGetSignedDataMsg 的目标 SIP。 相反, 只需应用合法的验证码签名 (例如 从 C:\Windows\System32\WindowsPowerShell\v1.0\Modules\ISE\ise.psm1) 到攻击者提供的代码, 并只劫持 CryptSIPVerifyIndirectData。这样做为攻击者提供了以下好处:</p>
+<ol>
+<li>有更少的劫持和清理工作；</li>
+<li>良性、合法签名的代码将正确应用其各自的签名；</li>
+<li>攻击者提供的带有 “合法” 的嵌入式校验码证书的代码很可能会受到安全产品的严格审查。</li>
+</ol>
+<p><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-14.png" alt="test.ps1 具有和ise.psm1相同的嵌入式校验码签名, 并且证书指纹值相匹配"></p>
+<p><em>test.ps1 具有和ise.psm1相同的嵌入式校验码签名, 并且证书指纹值相匹配</em></p>
+<p>虽然目前为止示例集中在 PowerShell SIP 上, 但这些劫持原则适用于所有SIP。下面是一个被劫持的可执行文件的SIP (C689AAB8-8E78-11D0-8C47-00C04FC295EE) 的示例, 它将合法的 Microsoft 数字签名应用于攻击者提供的二进制文件上:</p>
+<p><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-15.png" alt="notepad_backdoored.exe拥有应用于本属于notepad.exe (编录签名) 的数字签名"></p>
+<p><em>notepad_backdoored.exe拥有应用于本属于notepad.exe (目录签名) 的数字签名</em></p>
+<p><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-16.png" alt="&quot;数字签名&quot; UI 选项卡还确认攻击者-suppled notepad_backdoored. exe 验证为已签名的 Microsoft 文件。"></p>
+<p><em>“数字签名” UI 选项卡还确认攻击者-suppled notepad_backdoored. exe 验证为已签名的 Microsoft 文件。</em></p>
+<p>此劫持将骗过任何执行用户模式信任/签名验证的程序, 包括 Sysinternals 的Process Explorer：</p>
+<p><img src="/uploads/img/Subverting_Trust_in_Windows/Subverting_Trust_in_Windows-17.png" alt="notepad_backdoored.exe 在 Sysinternals 的Process Explorer中显示为“已验证签名&quot;。"></p>
+<p><em>notepad_backdoored.exe 在 Sysinternals 的Process Explorer中显示为“已验证签名”。</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>哎呀，被你看光了</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="longU-老K 微信扫一扫"/>
+        <p>微信扫一扫</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Win/" rel="tag"><i class="fa fa-tag"></i> Win</a>
+          
+            <a href="/tags/Trust/" rel="tag"><i class="fa fa-tag"></i> Trust</a>
+          
+            <a href="/tags/certificate/" rel="tag"><i class="fa fa-tag"></i> certificate</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/19/2017-10-19-windows-Subverting_Trust_in_Windows-3/" rel="next" title="[翻译]颠覆windows的信任体系(3)">
+                <i class="fa fa-chevron-left"></i> [翻译]颠覆windows的信任体系(3)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/20/2017-10-20-windows-Subverting_Trust_in_Windows-5/" rel="prev" title="[翻译]颠覆windows的信任体系(5)">
+                [翻译]颠覆windows的信任体系(5) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/laok.jpg"
+                alt="longU-老K" />
+            
+              <p class="site-author-name" itemprop="name">longU-老K</p>
+              <p class="site-description motion-element" itemprop="description">二进制+简单的web</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.tiaozhanziwo.com/" title="挑战自我" target="_blank">挑战自我</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰的博客" target="_blank">阮一峰的博客</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="/links/index.html" title="交换友链" target="_blank">交换友链</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows-信任体系架构攻击"><span class="nav-number">1.</span> <span class="nav-text">Windows 信任体系架构攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SIP-劫持-1-CryptSIPDllGetSignedDataMsg"><span class="nav-number">1.1.</span> <span class="nav-text">SIP 劫持 #1: CryptSIPDllGetSignedDataMsg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SIP-劫持-2-CryptSIPDllVerifyIndirectData"><span class="nav-number">1.2.</span> <span class="nav-text">SIP 劫持 #2: CryptSIPDllVerifyIndirectData</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">longU-老K</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.0.2</div>
+
+
+
+
+        
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=65104944";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.2"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://yoursite.com/2017/10/19/2017-10-19-windows-Subverting_Trust_in_Windows-4/';
+        this.page.identifier = '2017/10/19/2017-10-19-windows-Subverting_Trust_in_Windows-4/';
+        this.page.title = '[翻译]颠覆windows的信任体系(4)';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        $(function () {
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          if (offsetTop <= 0) {
+            // load directly when there's no a scrollbar
+            loadComments();
+          } else {
+            $(window).on('scroll.disqus_scroll', function () {
+              var scrollTop = document.documentElement.scrollTop;
+              if (scrollTop >= offsetTop) {
+                $(window).off('.disqus_scroll');
+                loadComments();
+              }
+            });
+          }
+        });
+      
+    </script>
+  
+
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+  
+  <script src="/lib/pangu/dist/pangu.min.js?v=3.3"></script>
+  <script type="text/javascript">pangu.spacingPage();</script>
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
