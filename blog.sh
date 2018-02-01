@@ -28,7 +28,7 @@ if [[ $OPT_PUSH = true ]]; then
 		NOWTIME=$(date "+ %G-%m-%d %H:%M:%S")
 		PUSHCOMMENT="update ${NOWTIME}"
 	fi
-	PUSHCOMMENT="git commit -m \\\"${PUSHCOMMENT}\\\""
+	PUSHCOMMENT="git commit \"-m \"${PUSHCOMMENT}\"\""
 	git add -A
 	echo `${PUSHCOMMENT}`
 	echo ${PUSHCOMMENT}
