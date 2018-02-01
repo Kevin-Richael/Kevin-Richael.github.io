@@ -28,11 +28,11 @@ if [[ $OPT_PUSH = true ]]; then
 		NOWTIME=$(date "+ %G-%m-%d %H:%M:%S")
 		PUSHCOMMENT="update ${NOWTIME}"
 	fi
-	PUSHCOMMENT="\"${PUSHCOMMENT}\""
-	#echo ${PUSHCOMMENT}
+	PUSHCOMMENT="git commit -m \\\"${PUSHCOMMENT}\\\""
 	git add -A
-	git commit -m ${PUSHCOMMENT}
-	git push gitpages blogSource
+	echo `${PUSHCOMMENT}`
+	echo ${PUSHCOMMENT}
+	#git push gitpages blogSource
 fi
 
 if [[ $OPT_DEPLOY = true ]]; then 
