@@ -31,8 +31,8 @@ if [[ $OPT_PUSH = true ]]; then
 	echo ${PUSHCOMMENT}
 	git add -A
 	git commit -am "${PUSHCOMMENT}"
-	echo ${PUSHCOMMENT}
-	#git push gitpages blogSource
+	#echo ${PUSHCOMMENT}
+	git push gitpages blogSource
 fi
 
 if [[ $OPT_DEPLOY = true ]]; then 
