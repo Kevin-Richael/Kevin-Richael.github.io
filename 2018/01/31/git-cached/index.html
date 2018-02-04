@@ -107,7 +107,7 @@
 <meta property="og:site_name" content="老K碎碎念">
 <meta property="og:description" content="起因因为这个博客先托管在github.io上了，然后想换成 hexo 的主题next，于是就在目录下直接clone下来一个next主题。结果目录树就变成了下面这个样子: blog  （当前目录） ├ .git ├ source ├ themes ┊          ├ next ┊          ┊         ├ .git ┊          ┊         ├ test ┊">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-02-01T05:20:28.643Z">
+<meta property="og:updated_time" content="2018-02-03T07:50:34.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git子目录下包括另一个git仓库">
 <meta name="twitter:description" content="起因因为这个博客先托管在github.io上了，然后想换成 hexo 的主题next，于是就在目录下直接clone下来一个next主题。结果目录树就变成了下面这个样子: blog  （当前目录） ├ .git ├ source ├ themes ┊          ├ next ┊          ┊         ├ .git ┊          ┊         ├ test ┊">
@@ -417,6 +417,7 @@
 </ol>
 <p>然后搜索了下 git rm 命令</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git rm path          # 删除暂存区或分支上的文件, 同时工作区也不需要这个文件了,和 rm 命令类似</span><br><span class="line">git rm --cached path # 只是删除git 暂存区的文件，对本地文件没有影响</span><br></pre></td></tr></table></figure>
+<p>但是如果就是想一个git模块包括几个子模块的话，可以参考简书的 <a href="https://www.jianshu.com/p/491609b1c426" target="_blank" rel="noopener">这篇文章</a>。</p>
 
       
     </div>
@@ -482,6 +483,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/02/cryptography_notes-1/" rel="prev" title="密码学笔记(1)--开篇">
+                密码学笔记(1)--开篇 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -564,7 +569,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -583,7 +588,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">3</span>
+                      
+                    
+                    <span class="site-state-item-count">4</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -616,7 +623,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">11</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>

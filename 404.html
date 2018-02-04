@@ -14,19 +14,38 @@
   </script>
   <script src="https://qzone.qq.com/gy/404/data.js" charset="utf-8"></script>
   <script src="https://qzone.qq.com/gy/404/page.js" charset="utf-8"></script>
-  <p id="cntdown"></p>
   <script>
-	var cnt = 6;
+	window.cnt;
+	window.cnt = 10;
+	var myHome = getMyHomeAhref();
 	var myVar=setInterval(function(){myTimer()},1000);
-	function myTimer(){
-		var t=cnt.toString();
-		t += "s后返回首页";
-		document.getElementById("cntdown").innerHTML=t;
-		if(0==cnt)
-		{
-			location="https://kevin-richael.github.io/"; 
+	function getMyHomeAhref(){
+		var a = document.getElementsByTagName("a");   //查找页面所有div标签      
+		for(var i=0;i<a.length;i++)    
+		{  
+			if("回到我的主页" == a.item(i).innerHTML && "desc_link" == a.item(i).className)
+			{
+				return a.item(i);
+			}
 		}
-		--cnt;
+		return null;
+	}
+	function myTimer(){
+		if (null != myHome)
+		{
+			var t=window.cnt.toString();
+			t = "回到我的主页(" + t + "s)"  ;			
+			myHome.innerHTML = t;
+		}
+		else
+		{
+			myHome = getMyHomeAhref();
+		}
+		if(0 == window.cnt)
+		{
+			location="/"; 
+		}
+		-- window.cnt;
 	}
 	</script>
 </body>
