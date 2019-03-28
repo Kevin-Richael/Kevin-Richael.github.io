@@ -312,6 +312,306 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/28/记一次测试-二次XSS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="longU-老K">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/laok.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老K碎碎念">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/28/记一次测试-二次XSS/" itemprop="url">记一次测试-二次XSS</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-28T16:22:16+08:00">2019-03-28</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          某系统测试
+登录后可以添加用户名称、应用用户等
+
+
+F12 查看下这两列，是个标签。第一次尝试：对用户名称 aaaa输入处 构造
+1&lt;td style="width:96px;display: table-cell;" id="userDisplayName" align="left"&gt;aaaaa&lt;/td&gt;
+ 构造个标签闭合，用户名称、应用用户分别上传如下
+ 12&lt;/td&gt;&lt;img src='1' onerror='alert(/1/)'&gt;&lt;td&gt;&lt;/td&gt;&lt;img src='1' onerror='alert(/2
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/03/28/记一次测试-二次XSS/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/06/cryptography_notes-2-DES/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="longU-老K">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/laok.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老K碎碎念">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/06/cryptography_notes-2-DES/" itemprop="url">密码学笔记(2)--DES</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-06T13:14:19+08:00">2018-04-06</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/密码学/" itemprop="url" rel="index"><span itemprop="name">密码学</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          加密算法现代密码学体系中，从加密算法本身角度出发主要分为两大类：对称加密（symmetric cryptography）和非对称加密（asymmetric cryptography），又被称作单钥加密（private key cryptography）和 双钥加密（public key cryptography）。
+对称加密对称加密是指 加密 和解密 使用同一个密钥，通俗点来说就是一把钥匙开一把锁，所以保护好这把钥匙就尤为重要了。就像防盗门一样，门再坚固，如果钥匙丢了或者被人偷偷复制了一把，那还是可以被人轻而易举的闯入的。
+常用的对称加密算法有:
+DESDate Encipher Standa
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/06/cryptography_notes-2-DES/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/23/git-ignore/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -343,7 +643,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-23T09:37:31+08:00">2018-02-23</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-23T11:35:25+08:00">2018-02-23</time>
             
 
             
@@ -472,7 +772,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/02/cryptography_notes-1/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/04/cryptography_notes-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="longU-老K">
@@ -491,7 +791,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/02/02/cryptography_notes-1/" itemprop="url">密码学笔记(1)--开篇</a></h1>
+                <a class="post-title-link" href="/2018/02/04/cryptography_notes-1/" itemprop="url">密码学笔记(1)--开篇</a></h1>
         
 
         <div class="post-meta">
@@ -503,7 +803,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-02T12:04:16+08:00">2018-02-02</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-04T12:06:30+08:00">2018-02-04</time>
             
 
             
@@ -567,7 +867,7 @@ DESDate Encipher Standa
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/02/02/cryptography_notes-1/#more" rel="contents">
+            <a class="btn" href="/2018/02/04/cryptography_notes-1/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -620,7 +920,7 @@ DESDate Encipher Standa
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/31/git-cached/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/03/git-cached/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="longU-老K">
@@ -639,7 +939,7 @@ DESDate Encipher Standa
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/31/git-cached/" itemprop="url">git子目录下包括另一个git仓库</a></h1>
+                <a class="post-title-link" href="/2018/02/03/git-cached/" itemprop="url">git子目录下包括另一个git仓库</a></h1>
         
 
         <div class="post-meta">
@@ -651,7 +951,7 @@ DESDate Encipher Standa
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-31T21:35:50+08:00">2018-01-31</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-03T15:52:53+08:00">2018-02-03</time>
             
 
             
@@ -722,7 +1022,7 @@ blog  （当前目录）
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/01/31/git-cached/#more" rel="contents">
+            <a class="btn" href="/2018/02/03/git-cached/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1497,302 +1797,6 @@ pwszDLL
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/05/2017-10-05-homebrew_install/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="longU-老K">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/laok.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老K碎碎念">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/05/2017-10-05-homebrew_install/" itemprop="url">mac包管理器homebrew安装</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-05T07:26:15+08:00">2017-10-05</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          打开bash,复制下：
-1ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-敲下回车等待下就OK了。默认也会安装 brew-cast，一个很好用的gui包管理工具。例如安装下MacDown：
-1brew cask install macdown
-
-          
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/10/05/2017-10-05-homebrew_install/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/22/2017-09-22-windows_pin-to-taskbar/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="longU-老K">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/laok.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老K碎碎念">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/22/2017-09-22-windows_pin-to-taskbar/" itemprop="url">pin to taskbar 添加快捷方式到任务栏</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-22T20:46:25+08:00">2017-09-22</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Win/" itemprop="url" rel="index"><span itemprop="name">Win</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          今天写个安装包添加快捷方式到任务栏12ShellExecute(NULL, "taskbarpin", "C:\Users\用户名\Desktop\应用软件.lnk", NULL, NULL, 0) //定在任务栏，快捷方式必须存在且有效ShellExecute(NULL, "taskbarunpin", "C:\Users\用户名\Desktop\应用软件.lnk", NULL, NULL, 0)//取消固定，快捷方式必须存在且有效
-以上代码在win7/8/8.1下执行没问题，但是在win10下会添加失败，并且导致程序执行。
-遂Google之，在stackoverflow发现同样的问题，然后
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/09/22/2017-09-22-windows_pin-to-taskbar/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1844,7 +1848,7 @@ pwszDLL
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1865,7 +1869,9 @@ pwszDLL
                     
                       
                     
-                    <span class="site-state-item-count">4</span>
+                      
+                    
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -1900,7 +1906,11 @@ pwszDLL
                     
                       
                     
-                    <span class="site-state-item-count">11</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -1966,7 +1976,7 @@ pwszDLL
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
