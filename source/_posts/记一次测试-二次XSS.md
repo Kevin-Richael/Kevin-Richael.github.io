@@ -46,6 +46,6 @@ tags:
     ```
     标签里面的错误属性好像给忽略掉了，然后又试了下，去掉后面的`</button>`不闭合，浏览器渲染还是没问题
     ``` html
-    <button onclick="javascript:window.location.href=&quot;/tyfwfw/dap/privilege/index.jsp?userId=218f3ebc-1bb2-4a46-9a58-263878ec1e0d&amp;userName=aa" onmouseover="alert(/00xss3/)" "'="">应用授权</button>
+    <button onclick="javascript:window.location.href=&quot;/tyfwfw/dap/privilege/index.jsp?userId=218f3ebc-1bb2-4a46-9a58-263878ec1e0d&amp;userName=aa" onmouseover="alert(/00xss3/)" "'="">应用授权
     ```
     这部分浏览器对便签的处理还需要再熟悉下。。。
