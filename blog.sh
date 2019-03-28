@@ -1,3 +1,4 @@
+# /bin/bash
 EchoUsage(){
     echo "USAGE:`basename $0` [-t] [-p 'comment'] [-d]"
 	echo "	-t :hexo generate & test"
