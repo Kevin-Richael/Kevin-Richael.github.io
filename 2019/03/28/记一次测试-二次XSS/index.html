@@ -110,7 +110,7 @@
 <meta property="og:image" content="http://yoursite.com/uploads/img/xss/1.png">
 <meta property="og:image" content="http://yoursite.com/uploads/img/xss/2.png">
 <meta property="og:image" content="http://yoursite.com/uploads/img/xss/3.png">
-<meta property="og:updated_time" content="2019-03-28T08:21:40.797Z">
+<meta property="og:updated_time" content="2019-03-28T08:56:29.531Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="记一次测试-二次XSS">
 <meta name="twitter:description" content="某系统测试 登录后可以添加用户名称、应用用户等   F12 查看下这两列，是个标签。第一次尝试：对用户名称 aaaa输入处 构造 1&amp;lt;td style=&quot;width:96px;display: table-cell;&quot; id=&quot;userDisplayName&quot; align=&quot;left&quot;&amp;gt;aaaaa&amp;lt;/td&amp;gt;  构造个标签闭合，用户名称、应用用户分别上传如下  12&amp;lt;/">
@@ -346,7 +346,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-28T16:22:16+08:00">2019-03-28</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-28T16:56:29+08:00">2019-03-28</time>
             
 
             
@@ -420,7 +420,7 @@
 <li><p>二次构造，应用用户即userName中给值，<code>aa&#39;/onmouseover=&#39;alert(/00xss3/)&#39;</code>，其中单引号从数据库读出来的时候会被替换成双引号， aa 后面的双引号用来跟<code>onclick=&quot;</code>的引号闭合，然后对button注册个onmouseover 事件，上传下试试，bingo，成功；<br><img src="/uploads/img/xss/3.png" alt=""><br>看下这次构造出来的编码</p>
  <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">"javascript:window.location.href=&amp;quot;/tyfwfw/dap/privilege/index.jsp?userId=218f3ebc-1bb2-4a46-9a58-263878ec1e0d&amp;amp;userName=aa"</span> <span class="attr">onmouseover</span>=<span class="string">"alert(/00xss3/)"</span> "'=<span class="string">""</span>&gt;</span>应用授权<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p> 标签里面的错误属性好像给忽略掉了，然后又试了下，去掉后面的<code>&lt;/button&gt;</code>不闭合，浏览器渲染还是没问题</p>
- <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">"javascript:window.location.href=&amp;quot;/tyfwfw/dap/privilege/index.jsp?userId=218f3ebc-1bb2-4a46-9a58-263878ec1e0d&amp;amp;userName=aa"</span> <span class="attr">onmouseover</span>=<span class="string">"alert(/00xss3/)"</span> "'=<span class="string">""</span>&gt;</span>应用授权<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+ <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">"javascript:window.location.href=&amp;quot;/tyfwfw/dap/privilege/index.jsp?userId=218f3ebc-1bb2-4a46-9a58-263878ec1e0d&amp;amp;userName=aa"</span> <span class="attr">onmouseover</span>=<span class="string">"alert(/00xss3/)"</span> "'=<span class="string">""</span>&gt;</span>应用授权</span><br></pre></td></tr></table></figure>
 <p> 这部分浏览器对便签的处理还需要再熟悉下。。。</p>
 </li>
 </ol>
